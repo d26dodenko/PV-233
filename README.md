@@ -1,4 +1,45 @@
 # Лабораторная работа №1 <br> Составление тест-кейсов для готового кода. Качество ПО и место тестирования в жизненном цикле
+
+## Выполненная работа — Мороз Роман
+
+Ветка: `moroz_roman`. Функция из задания реализована в [delivery.py](delivery.py),
+34 автотеста — в [tests/test_delivery.py](tests/test_delivery.py).
+Анализ правил, классы эквивалентности, тест-кейсы и выводы:
+[отчёт](docs/report.md). Исходное задание сохранено ниже.
+
+### Запуск через uv
+
+Требуется [uv](https://docs.astral.sh/uv/getting-started/installation/).
+Локальная версия Python задана в `.python-version` (3.13).
+
+```bash
+uv sync --locked --dev
+uv run --locked pytest -v
+```
+
+`uv sync` создаёт `.venv` и устанавливает зависимости из `uv.lock`.
+При необходимости uv автоматически скачивает Python. Активировать `.venv`
+для `uv run` не требуется. Эквивалентный запуск команды из задания:
+
+```bash
+source .venv/bin/activate
+pytest -v
+```
+
+Проверка покрытия строк и ветвей, как в CI:
+
+```bash
+uv run --locked pytest -v --cov=delivery --cov-branch --cov-report=term-missing --cov-report=xml --junitxml=test-results.xml
+```
+
+[GitHub Actions](.github/workflows/tests.yml) запускает эту проверку на Python
+3.11, 3.12, 3.13 и 3.14 при push, pull request и вручную. Для успешной
+проверки необходимо 100% покрытия строк и ветвей `delivery.py`.
+Зависимости устанавливаются с `--locked`: рассогласование `pyproject.toml`
+и `uv.lock` завершает CI ошибкой. Настройка uv основана на
+[официальном руководстве](https://docs.astral.sh/uv/guides/integration/github/).
+
+---
 ## Цель работы
 
 Сформировать системное представление о качестве ПО и роли тестирования в жизненном цикле; приобрести практические навыки проектирования тест-кейсов и написания автотестов на основе готового кода.
