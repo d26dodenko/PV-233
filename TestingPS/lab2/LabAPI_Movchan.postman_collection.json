@@ -1,0 +1,1444 @@
+{
+	"info": {
+		"_postman_id": "bfacc740-e78d-453b-b1a9-62115e73a608",
+		"name": "LabAPI_Movchan",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48789722",
+		"_collection_link": "https://yufers-4ad28ff9-2576265.postman.co/workspace/2b8c74d6-9467-48b6-87ac-2b97cd81cc8c/collection/48789722-bfacc740-e78d-453b-b1a9-62115e73a608?action=share&source=collection_link&creator=48789722"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Get Auth Token (P01)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"token\", \"\");",
+									"",
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response contains an auth token\", () => {",
+									"    const { token } = pm.response.json();",
+									"    pm.expect(token).to.be.a(\"string\");",
+									"    pm.expect(token.trim()).not.to.be.empty;",
+									"    if (pm.response.code === 200) {",
+									"        pm.environment.set(\"token\", token);",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth"
+							]
+						},
+						"description": "**Цель** — Получить токен авторизации.\n\n**Входные данные** — Корректные логин и пароль.\n\n**Ожидаемый результат** — `200`, непустой токен."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Auth Token With Wrong Password (N01)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response reports invalid credentials\", () => {",
+									"    pm.expect(pm.response.json()).to.have.property(\"reason\", \"Bad credentials\");",
+									"});",
+									"pm.test(\"Response contains no token\", () => {",
+									"    pm.expect(pm.response.json()).not.to.have.property(\"token\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"0\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth"
+							]
+						},
+						"description": "**Цель** — Проверить ответ API на неверный пароль.\n\n**Входные данные** — `admin` и неверный пароль.\n\n**Ожидаемый результат** — `200`, JSON с причиной `Bad credentials`, токен отсутствует."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "List Bookings (P02)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response is an array of booking IDs\", () => {",
+									"    const bookings = pm.response.json();",
+									"    pm.expect(bookings).to.be.an(\"array\");",
+									"    bookings.forEach(({ bookingid }) => {",
+									"        pm.expect(Number.isInteger(bookingid)).to.equal(true);",
+									"    });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Получить список идентификаторов бронирований.\n\n**Входные данные** — Без фильтров.\n\n**Ожидаемый результат** — `200`, массив идентификаторов."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (P03)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"bookingId\", \"\");",
+									"pm.environment.set(\"expectedBooking\", \"\");",
+									"",
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response contains a valid booking ID\", () => {",
+									"    const { bookingid } = pm.response.json();",
+									"    pm.expect(Number.isInteger(bookingid)).to.equal(true);",
+									"    pm.expect(bookingid).to.be.above(0);",
+									"    if (pm.response.code === 200) {",
+									"        pm.environment.set(\"bookingId\", String(bookingid));",
+									"    }",
+									"});",
+									"pm.test(\"Booking matches the submitted JSON\", () => {",
+									"    const expected = JSON.parse(pm.variables.replaceIn(pm.request.body.raw));",
+									"    pm.expect(pm.response.json().booking).to.deep.equal(expected);",
+									"    if (pm.response.code === 200) {",
+									"        pm.environment.set(\"expectedBooking\", JSON.stringify(expected));",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 200,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Создать бронирование и сохранить его ID.\n\n**Входные данные** — Полный JSON бронирования с именем, фамилией, стоимостью, признаком предоплаты, датами и дополнительными пожеланиями.\n\n**Ожидаемый результат** — `200`, данные и ID созданной записи."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking by ID (P04)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Booking matches the creation data\", () => {",
+									"    const expected = JSON.parse(pm.environment.get(\"expectedBooking\"));",
+									"    pm.expect(pm.response.json()).to.deep.equal(expected);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							]
+						},
+						"description": "**Цель** — Получить созданное бронирование по ID.\n\n**Входные данные** — ID из P03.\n\n**Ожидаемый результат** — `200`, данные совпадают с P03."
+					},
+					"response": []
+				},
+				{
+					"name": "Replace Booking (N02)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 403;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "token={{token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 5000,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							]
+						},
+						"description": "**Цель** — Проверить отказ в обновлении без токена.\n\n**Входные данные** — Существующий ID и корректное тело, без токена.\n\n**Ожидаемый результат** — `403`, запрос отклонён."
+					},
+					"response": []
+				},
+				{
+					"name": "Replace Booking (N03)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 403;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "token=token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 5000,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							]
+						},
+						"description": "**Цель** — Проверить отказ в обновлении с неверным токеном.\n\n**Входные данные** — Существующий ID и корректное тело, неверный токен.\n\n**Ожидаемый результат** — `403`, запрос отклонён."
+					},
+					"response": []
+				},
+				{
+					"name": "Replace Booking (P05)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Booking matches the replacement data\", () => {",
+									"    const expected = JSON.parse(pm.variables.replaceIn(pm.request.body.raw));",
+									"    pm.expect(pm.response.json()).to.deep.equal(expected);",
+									"    if (pm.response.code === 200) {",
+									"        pm.environment.set(\"expectedBooking\", JSON.stringify(expected));",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "token={{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 5000,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							]
+						},
+						"description": "**Цель** — Полностью обновить созданное бронирование.\n\n**Входные данные** — ID из P03, токен из P01, полный JSON с ценой `5000`.\n\n**Ожидаемый результат** — `200`, полные обновлённые данные."
+					},
+					"response": []
+				},
+				{
+					"name": "Partially Update Booking (P06)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Price changed and the other fields stayed the same\", () => {",
+									"    const previous = JSON.parse(pm.environment.get(\"expectedBooking\"));",
+									"    const { totalprice } = JSON.parse(pm.variables.replaceIn(pm.request.body.raw));",
+									"    pm.expect(pm.response.json()).to.deep.equal({ ...previous, totalprice });",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "token={{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"totalprice\": 1236\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							]
+						},
+						"description": "**Цель** — Изменить стоимость, сохранив остальные поля.\n\n**Входные данные** — ID из P03, токен из P01, цена `123`.\n\n**Ожидаемый результат** — `200`, цена изменена, остальные поля сохранены."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Booking (P07)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 201\", () => pm.response.to.have.status(201));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body is Created\", () => {",
+									"    pm.expect(pm.response.text().trim()).to.equal(\"Created\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "token={{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/booking/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							]
+						},
+						"description": "**Цель** — Удалить созданное бронирование.\n\n**Входные данные** — ID из P03, токен из P01.\n\n**Ожидаемый результат** — `201`, запись удалена."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking by ID (P08)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 404;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							]
+						},
+						"description": "**Цель** — Проверить отсутствие записи после удаления.\n\n**Входные данные** — ID из P03 после P07.\n\n**Ожидаемый результат** — `404`, запись недоступна."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking by ID (N04)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 404;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking/-1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"-1"
+							]
+						},
+						"description": "**Цель** — Проверить ответ на запрос несуществующего ID.\n\n**Входные данные** — Несуществующий ID `-1`.\n\n**Ожидаемый результат** — `404`, запись недоступна."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (N05)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 400;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\":,\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 200,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить обработку синтаксически некорректного JSON.\n\n**Входные данные** — Некорректный JSON, например `{\"firstname\":`.\n\n**Ожидаемый результат** — `400`, запрос отклонён."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (N06)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 400;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": \"abc\",\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить валидацию типа стоимости.\n\n**Входные данные** — `\"totalprice\": \"abc\"`.\n\n**Ожидаемый результат** — `400`, неверный тип отклонён."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (N07)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 400;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"totalprice\": 200,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить обработку отсутствующего обязательного поля.\n\n**Входные данные** — Удалено обязательное поле `firstname`.\n\n**Ожидаемый результат** — `400`, запрос отклонён."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Booking (N08)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 405;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "token={{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/booking/{{bookingId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking",
+								"{{bookingId}}"
+							]
+						},
+						"description": "**Цель** — Проверить ответ на повторное удаление.\n\n**Входные данные** — Повторное удаление после P08 с действующим токеном.\n\n**Ожидаемый результат** — `405`, повторное удаление отклонено."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (B01)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 400;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"\",\n    \"lastname\": \"\",\n    \"totalprice\": 200,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить допустимость пустых имён.\n\n**Входные данные** — `firstname` и `lastname` равны `\"\"`.\n\n**Ожидаемый результат** — `400`, пустые имена отклонены."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (B02)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 400;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"longFirstName\", \"A\".repeat(1001));",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"{{longFirstName}}\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 200,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить верхнюю границу длины имени.\n\n**Входные данные** — `firstname` длиной 1001 символ.\n\n**Ожидаемый результат** — `400`, гипотеза об ограничении длины."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (B03)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"A booking was created with a price of zero\", () => {",
+									"    const { bookingid, booking } = pm.response.json();",
+									"    pm.expect(Number.isInteger(bookingid)).to.equal(true);",
+									"    pm.expect(booking).to.have.property(\"totalprice\", 0);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 0,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить допустимость нулевой стоимости.\n\n**Входные данные** — `totalprice: 0`.\n\n**Ожидаемый результат** — `200`, цена сохранена как число `0`."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (B04)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 400;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": -1,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить допустимость отрицательной стоимости.\n\n**Входные данные** — `totalprice: -1`.\n\n**Ожидаемый результат** — `400`, отрицательная цена отклонена."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (B05)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 400;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 9007199254740991,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2026-01-01\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить верхнюю границу стоимости.\n\n**Входные данные** — `totalprice: 9007199254740991`.\n\n**Ожидаемый результат** — `400`, гипотеза о верхнем ограничении цены."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (B06)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 400;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 200,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"2025-12-31\",\n        \"checkout\": \"2026-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить согласованность дат заезда и выезда.\n\n**Входные данные** — В `bookingdates` дата выезда `2025-12-31` раньше даты заезда `2026-01-01`.\n\n**Ожидаемый результат** — `400`, неверный порядок дат отклонён."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Booking (B07)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const expectedStatus = 400;",
+									"",
+									"pm.test(`Status is ${expectedStatus}`, () => {",
+									"    pm.response.to.have.status(expectedStatus);",
+									"});",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body describes an error\", () => {",
+									"    const body = pm.response.text().trim();",
+									"    const messages = {",
+									"        403: /forbidden/i,",
+									"        404: /not found/i,",
+									"        405: /method not allowed/i",
+									"    };",
+									"    pm.expect(body).not.to.be.empty;",
+									"    if (messages[expectedStatus]) {",
+									"        pm.expect(body).to.match(messages[expectedStatus]);",
+									"    } else {",
+									"        pm.expect(body).not.to.match(/\"bookingid\"\\s*:/);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"Anton\",\n    \"lastname\": \"Movcahn\",\n    \"totalprice\": 200,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n        \"checkin\": \"invalid-date\",\n        \"checkout\": \"2027-01-01\"\n    },\n    \"additionalneeds\": \"midnight snack\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/booking",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"booking"
+							]
+						},
+						"description": "**Цель** — Проверить валидацию формата даты заезда.\n\n**Входные данные** — `bookingdates.checkin` равен `\"invalid-date\"`.\n\n**Ожидаемый результат** — `400`, неверный формат даты отклонён."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Check API Health (P09)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status is 201\", () => pm.response.to.have.status(201));",
+									"pm.test(\"Response time is below 2000 ms\", () => {",
+									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"});",
+									"pm.test(\"Response body is Created\", () => {",
+									"    pm.expect(pm.response.text().trim()).to.equal(\"Created\");",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ping",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ping"
+							]
+						},
+						"description": "**Цель** — Проверить доступность API.\n\n**Входные данные** — Без параметров.\n\n**Ожидаемый результат** — `201`, сервис доступен."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
