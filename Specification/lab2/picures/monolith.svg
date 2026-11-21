@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 110">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#334155"/></marker></defs>
+<rect width="840" height="110" rx="12" fill="#f8fafc"/>
+<path d="M135 55h30" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M300 55h30" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M660 55h30" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<rect x="15" y="24" width="120" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="75.0" y="48" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">Браузер</text>
+<text x="75.0" y="70" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Витрина</text>
+<rect x="165" y="24" width="135" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="232.5" y="48" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">Прокси</text>
+<text x="232.5" y="70" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">HTTPS</text>
+<rect x="330" y="24" width="330" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="495.0" y="48" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">Монолитное веб-приложение</text>
+<text x="495.0" y="70" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Доступ · каталог · корзина · склад · заказы</text>
+<rect x="690" y="24" width="135" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="757.5" y="48" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">PostgreSQL</text>
+<text x="757.5" y="70" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Общая БД</text>
+</svg>

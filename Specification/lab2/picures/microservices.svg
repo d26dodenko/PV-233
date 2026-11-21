@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 540">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#334155"/></marker></defs>
+<rect width="820" height="540" rx="12" fill="#f8fafc"/>
+<path d="M410 74v34" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M345 170L102 225" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M385 170L307 225" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M435 170L512 225" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M475 170L717 225" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M102 287v53" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M307 287v53" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M512 287v53" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M717 287v53" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M395 256h30" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M600 256h30" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<path d="M375 287v23h31v151" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
+<path d="M665 287v23h-46v181h-129" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)" marker-start="url(#a)"/>
+<rect x="330" y="12" width="160" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="410.0" y="36" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">Браузер</text>
+<text x="410.0" y="58" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Витрина</text>
+<rect x="330" y="108" width="160" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="410.0" y="132" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">API-шлюз</text>
+<text x="410.0" y="154" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">HTTPS и маршруты</text>
+<rect x="15" y="225" width="175" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="102.5" y="249" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">Доступ</text>
+<text x="102.5" y="271" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Вход и сессии</text>
+<rect x="15" y="340" width="175" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="102.5" y="364" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">БД «Доступ»</text>
+<text x="102.5" y="386" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Пользователи и сессии</text>
+<rect x="220" y="225" width="175" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="307.5" y="249" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">Заказы</text>
+<text x="307.5" y="271" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Корзина и оформление</text>
+<rect x="220" y="340" width="175" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="307.5" y="364" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">БД «Заказы»</text>
+<text x="307.5" y="386" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Корзины и заказы</text>
+<rect x="425" y="225" width="175" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="512.5" y="249" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">Каталог</text>
+<text x="512.5" y="271" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Поиск и цены</text>
+<rect x="425" y="340" width="175" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="512.5" y="364" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">БД «Каталог»</text>
+<text x="512.5" y="386" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Товары и цены</text>
+<rect x="630" y="225" width="175" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="717.5" y="249" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">Склад</text>
+<text x="717.5" y="271" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Остатки и резервы</text>
+<rect x="630" y="340" width="175" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="717.5" y="364" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">БД «Склад»</text>
+<text x="717.5" y="386" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Остатки и резервы</text>
+<rect x="330" y="461" width="160" height="62" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+<text x="410.0" y="485" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#0f172a">Брокер</text>
+<text x="410.0" y="507" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0f172a">Команды и результаты</text>
+</svg>
