@@ -1,0 +1,25 @@
+{
+  "archive": "artifacts/moroz-shop-linux-x64.tar.gz",
+  "extracted_package_checks": {
+    "/api/health": {
+      "status": 200,
+      "bytes": 15
+    },
+    "/api/products": {
+      "status": 200,
+      "bytes": 680
+    },
+    "/": {
+      "status": 200,
+      "bytes": 461
+    },
+    "/products": {
+      "status": 200,
+      "bytes": 461
+    },
+    "/signup": {
+      "status": 200,
+      "bytes": 461
+    }
+  }
+}

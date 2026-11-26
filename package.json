@@ -1,0 +1,20 @@
+{
+  "name": "moroz-roman-labs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:e2e": "playwright test --config TestingPS/Laba-3/playwright.config.ts",
+    "test:api": "newman run TestingPS/Laba-2/postman/LabAPI_Moroz.postman_collection.json -e TestingPS/Laba-2/postman/local.postman_environment.json --timeout-request 10000 --timeout-script 5000 --reporters cli,junit,json --reporter-junit-export artifacts/api/junit.xml --reporter-json-export artifacts/api/run.json",
+    "typecheck": "tsc --noEmit --project TestingPS/Laba-3/tsconfig.json"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@types/node": "^24.10.0",
+    "newman": "^6.2.1",
+    "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "handlebars": "4.7.10"
+  }
+}

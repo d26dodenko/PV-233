@@ -1,9 +1,7 @@
 """Расчёт стоимости доставки по правилам лабораторной работы №1."""
 
 
-def calculate_delivery_cost(
-    order_amount: float, distance_km: float, is_premium: bool
-) -> float:
+def calculate_delivery_cost(order_amount: float, distance_km: float, is_premium: bool) -> float:
     """Вернуть стоимость доставки; отклонить отрицательную сумму или расстояние.
 
     От 5000 доставка бесплатна. Иначе тариф составляет 200 до 5 км,

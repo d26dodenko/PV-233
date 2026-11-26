@@ -8,3 +8,12 @@ htmlcov/
 coverage.xml
 test-results.xml
 .DS_Store
+target/
+node_modules/
+TestingPS/Laba-3/frontend/dist/
+*.tsbuildinfo
+artifacts/
+test-results/
+playwright-report/
+.ruff_cache/
+*.profraw

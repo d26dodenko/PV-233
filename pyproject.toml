@@ -1,7 +1,7 @@
 [project]
 name = "delivery-lab"
 version = "0.1.0"
-description = "Лабораторная работа №1: тестирование расчёта доставки"
+description = "Лабораторные работы: тестирование и метрики качества ПО"
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
 dependencies = []
@@ -10,20 +10,39 @@ dependencies = []
 dev = [
     "pytest>=8.3,<10",
     "pytest-cov>=6,<8",
+    "ruff>=0.14,<1",
+    "radon>=6,<7",
+    "bandit>=1.8,<2",
+    "pip-audit>=2.9,<3",
+    "pyyaml>=6,<7",
 ]
 
 [tool.uv]
 package = false
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["."]
+testpaths = ["TestingPS/Laba-1/tests", "Specification/Laba-1/tests"]
+pythonpath = ["TestingPS/Laba-1", "Specification/Laba-1"]
 addopts = "--strict-config --strict-markers"
 
 [tool.coverage.run]
 branch = true
-source = ["delivery"]
+source = ["delivery", "calculator"]
 
 [tool.coverage.report]
 show_missing = true
 fail_under = 100
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+include = ["*.py", "*.pyi", "**/pyproject.toml"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["delivery", "calculator"]
+
+[tool.ruff.lint.per-file-ignores]
+"TestingPS/Laba-2/scripts/generate_postman.py" = ["E501"] # Строки содержат JavaScript для Postman.

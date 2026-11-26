@@ -1,0 +1,659 @@
+{
+  "generated_utc": "2026-11-26T08:40:47.842379+00:00",
+  "stats": {
+    "iterations": {
+      "total": 1,
+      "pending": 0,
+      "failed": 0
+    },
+    "items": {
+      "total": 37,
+      "pending": 0,
+      "failed": 0
+    },
+    "scripts": {
+      "total": 55,
+      "pending": 0,
+      "failed": 0
+    },
+    "prerequests": {
+      "total": 37,
+      "pending": 0,
+      "failed": 0
+    },
+    "requests": {
+      "total": 36,
+      "pending": 0,
+      "failed": 0
+    },
+    "tests": {
+      "total": 36,
+      "pending": 0,
+      "failed": 0
+    },
+    "assertions": {
+      "total": 118,
+      "pending": 0,
+      "failed": 7
+    },
+    "testScripts": {
+      "total": 36,
+      "pending": 0,
+      "failed": 0
+    },
+    "prerequestScripts": {
+      "total": 19,
+      "pending": 0,
+      "failed": 0
+    }
+  },
+  "cases": [
+    {
+      "id": "API-01",
+      "name": "Получить токен",
+      "method": "POST",
+      "path": "/auth",
+      "category": "positive",
+      "expected_status": 200,
+      "body": {
+        "username": "admin",
+        "password": "password123"
+      },
+      "actual_status": 200,
+      "response_time_ms": 2692,
+      "failed_checks": [
+        "Ответ быстрее 2000 мс"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "id": "API-02",
+      "name": "Неверный пароль: документированная особенность HTTP 200",
+      "method": "POST",
+      "path": "/auth",
+      "category": "negative",
+      "expected_status": 200,
+      "body": {
+        "username": "admin",
+        "password": "wrong"
+      },
+      "actual_status": 200,
+      "response_time_ms": 146,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-03",
+      "name": "Неверный логин",
+      "method": "POST",
+      "path": "/auth",
+      "category": "negative",
+      "expected_status": 200,
+      "body": {
+        "username": "wrong",
+        "password": "password123"
+      },
+      "actual_status": 200,
+      "response_time_ms": 158,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-04",
+      "name": "Создать бронирование",
+      "method": "POST",
+      "path": "/booking",
+      "category": "positive",
+      "expected_status": 200,
+      "body": {
+        "firstname": "{{runName}}",
+        "lastname": "Moroz",
+        "totalprice": 120,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-10",
+          "checkout": "2027-01-12"
+        },
+        "additionalneeds": "Breakfast"
+      },
+      "actual_status": 200,
+      "response_time_ms": 165,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-05",
+      "name": "Список и фильтр по имени",
+      "method": "GET",
+      "path": "/booking?firstname={{runName}}",
+      "category": "positive",
+      "expected_status": 200,
+      "body": null,
+      "actual_status": 200,
+      "response_time_ms": 157,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-06",
+      "name": "Получить созданную запись",
+      "method": "GET",
+      "path": "/booking/{{bookingId}}",
+      "category": "positive",
+      "expected_status": 200,
+      "body": null,
+      "actual_status": 200,
+      "response_time_ms": 157,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-07",
+      "name": "Полное обновление PUT",
+      "method": "PUT",
+      "path": "/booking/{{bookingId}}",
+      "category": "positive",
+      "expected_status": 200,
+      "body": {
+        "firstname": "{{runName}}",
+        "lastname": "Moroz",
+        "totalprice": 250,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-10",
+          "checkout": "2027-01-12"
+        },
+        "additionalneeds": "Dinner"
+      },
+      "actual_status": 200,
+      "response_time_ms": 161,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-08",
+      "name": "Частичное обновление PATCH",
+      "method": "PATCH",
+      "path": "/booking/{{bookingId}}",
+      "category": "positive",
+      "expected_status": 200,
+      "body": {
+        "lastname": "Updated"
+      },
+      "actual_status": 200,
+      "response_time_ms": 159,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-09",
+      "name": "Обновление сохранено при GET",
+      "method": "GET",
+      "path": "/booking/{{bookingId}}",
+      "category": "positive",
+      "expected_status": 200,
+      "body": null,
+      "actual_status": 200,
+      "response_time_ms": 160,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-10",
+      "name": "PUT без токена",
+      "method": "PUT",
+      "path": "/booking/{{bookingId}}",
+      "category": "negative",
+      "expected_status": 403,
+      "body": {
+        "firstname": "{{runName}}",
+        "lastname": "Moroz",
+        "totalprice": 250,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-10",
+          "checkout": "2027-01-12"
+        },
+        "additionalneeds": "Dinner"
+      },
+      "actual_status": 403,
+      "response_time_ms": 159,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-11",
+      "name": "PATCH с неверным токеном",
+      "method": "PATCH",
+      "path": "/booking/{{bookingId}}",
+      "category": "negative",
+      "expected_status": 403,
+      "body": {
+        "lastname": "Intruder"
+      },
+      "actual_status": 403,
+      "response_time_ms": 159,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-12",
+      "name": "DELETE без токена",
+      "method": "DELETE",
+      "path": "/booking/{{bookingId}}",
+      "category": "negative",
+      "expected_status": 403,
+      "body": null,
+      "actual_status": 403,
+      "response_time_ms": 155,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-13",
+      "name": "Негативные проверки не изменили запись",
+      "method": "GET",
+      "path": "/booking/{{bookingId}}",
+      "category": "positive",
+      "expected_status": 200,
+      "body": null,
+      "actual_status": 200,
+      "response_time_ms": 463,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-14",
+      "name": "Несуществующий ID",
+      "method": "GET",
+      "path": "/booking/2147483647",
+      "category": "negative",
+      "expected_status": 404,
+      "body": null,
+      "actual_status": 404,
+      "response_time_ms": 157,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-15",
+      "name": "Синтаксически неверный JSON",
+      "method": "POST",
+      "path": "/booking",
+      "category": "negative",
+      "expected_status": 400,
+      "body": "{\"firstname\":",
+      "actual_status": 400,
+      "response_time_ms": 156,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-16",
+      "name": "Строка вместо totalprice",
+      "method": "POST",
+      "path": "/booking",
+      "category": "negative",
+      "expected_status": 400,
+      "body": {
+        "firstname": "{{runName}}",
+        "lastname": "Moroz",
+        "totalprice": "not-a-number",
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-10",
+          "checkout": "2027-01-12"
+        },
+        "additionalneeds": "Breakfast"
+      },
+      "actual_status": 200,
+      "response_time_ms": 156,
+      "failed_checks": [
+        "API-16: HTTP 400"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "id": "API-16-C",
+      "name": "Удалить только запись текущего probe",
+      "method": "DELETE",
+      "path": "/booking/{{probeId}}",
+      "category": "cleanup",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 155,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-17",
+      "name": "Отсутствуют обязательные поля",
+      "method": "POST",
+      "path": "/booking",
+      "category": "negative",
+      "expected_status": 400,
+      "body": {
+        "firstname": "{{runName}}"
+      },
+      "actual_status": 500,
+      "response_time_ms": 156,
+      "failed_checks": [
+        "API-17: HTTP 400"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "id": "API-18",
+      "name": "Пустые имена",
+      "method": "POST",
+      "path": "/booking",
+      "category": "boundary",
+      "expected_status": 400,
+      "body": {
+        "firstname": "",
+        "lastname": "",
+        "totalprice": 120,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-10",
+          "checkout": "2027-01-12"
+        },
+        "additionalneeds": "Breakfast"
+      },
+      "actual_status": 200,
+      "response_time_ms": 156,
+      "failed_checks": [
+        "API-18: HTTP 400"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "id": "API-18-C",
+      "name": "Удалить только запись текущего probe",
+      "method": "DELETE",
+      "path": "/booking/{{probeId}}",
+      "category": "cleanup",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 155,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-19",
+      "name": "Имя длиной 1001 символ",
+      "method": "POST",
+      "path": "/booking",
+      "category": "boundary",
+      "expected_status": 200,
+      "body": {
+        "firstname": "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM",
+        "lastname": "Moroz",
+        "totalprice": 120,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-10",
+          "checkout": "2027-01-12"
+        },
+        "additionalneeds": "Breakfast"
+      },
+      "actual_status": 200,
+      "response_time_ms": 157,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-19-C",
+      "name": "Удалить только запись текущего probe",
+      "method": "DELETE",
+      "path": "/booking/{{probeId}}",
+      "category": "cleanup",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 155,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-20",
+      "name": "Нулевая цена",
+      "method": "POST",
+      "path": "/booking",
+      "category": "boundary",
+      "expected_status": 200,
+      "body": {
+        "firstname": "{{runName}}",
+        "lastname": "Moroz",
+        "totalprice": 0,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-10",
+          "checkout": "2027-01-12"
+        },
+        "additionalneeds": "Breakfast"
+      },
+      "actual_status": 200,
+      "response_time_ms": 158,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-20-C",
+      "name": "Удалить только запись текущего probe",
+      "method": "DELETE",
+      "path": "/booking/{{probeId}}",
+      "category": "cleanup",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 155,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-21",
+      "name": "Отрицательная цена",
+      "method": "POST",
+      "path": "/booking",
+      "category": "boundary",
+      "expected_status": 400,
+      "body": {
+        "firstname": "{{runName}}",
+        "lastname": "Moroz",
+        "totalprice": -1,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-10",
+          "checkout": "2027-01-12"
+        },
+        "additionalneeds": "Breakfast"
+      },
+      "actual_status": 200,
+      "response_time_ms": 157,
+      "failed_checks": [
+        "API-21: HTTP 400"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "id": "API-21-C",
+      "name": "Удалить только запись текущего probe",
+      "method": "DELETE",
+      "path": "/booking/{{probeId}}",
+      "category": "cleanup",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 156,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-22",
+      "name": "Большая цена 2147483647",
+      "method": "POST",
+      "path": "/booking",
+      "category": "boundary",
+      "expected_status": 200,
+      "body": {
+        "firstname": "{{runName}}",
+        "lastname": "Moroz",
+        "totalprice": 2147483647,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-10",
+          "checkout": "2027-01-12"
+        },
+        "additionalneeds": "Breakfast"
+      },
+      "actual_status": 200,
+      "response_time_ms": 155,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-22-C",
+      "name": "Удалить только запись текущего probe",
+      "method": "DELETE",
+      "path": "/booking/{{probeId}}",
+      "category": "cleanup",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 159,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-23",
+      "name": "Выезд раньше заезда",
+      "method": "POST",
+      "path": "/booking",
+      "category": "boundary",
+      "expected_status": 400,
+      "body": {
+        "firstname": "{{runName}}",
+        "lastname": "Moroz",
+        "totalprice": 120,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "2027-01-12",
+          "checkout": "2027-01-10"
+        },
+        "additionalneeds": "Breakfast"
+      },
+      "actual_status": 200,
+      "response_time_ms": 155,
+      "failed_checks": [
+        "API-23: HTTP 400"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "id": "API-23-C",
+      "name": "Удалить только запись текущего probe",
+      "method": "DELETE",
+      "path": "/booking/{{probeId}}",
+      "category": "cleanup",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 160,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-24",
+      "name": "Невалидные даты",
+      "method": "POST",
+      "path": "/booking",
+      "category": "boundary",
+      "expected_status": 400,
+      "body": {
+        "firstname": "{{runName}}",
+        "lastname": "Moroz",
+        "totalprice": 120,
+        "depositpaid": true,
+        "bookingdates": {
+          "checkin": "not-a-date",
+          "checkout": "not-a-date"
+        },
+        "additionalneeds": "Breakfast"
+      },
+      "actual_status": 200,
+      "response_time_ms": 158,
+      "failed_checks": [
+        "API-24: HTTP 400"
+      ],
+      "result": "FAIL"
+    },
+    {
+      "id": "API-24-C",
+      "name": "Удалить только запись текущего probe",
+      "method": "DELETE",
+      "path": "/booking/{{probeId}}",
+      "category": "cleanup",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 155,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-25",
+      "name": "Удаление: документированный HTTP 201",
+      "method": "DELETE",
+      "path": "/booking/{{bookingId}}",
+      "category": "positive",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 155,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-26",
+      "name": "GET удалённой записи",
+      "method": "GET",
+      "path": "/booking/{{bookingId}}",
+      "category": "negative",
+      "expected_status": 404,
+      "body": null,
+      "actual_status": 404,
+      "response_time_ms": 157,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-27",
+      "name": "Повторное удаление: особенность HTTP 405",
+      "method": "DELETE",
+      "path": "/booking/{{bookingId}}",
+      "category": "negative",
+      "expected_status": 405,
+      "body": null,
+      "actual_status": 405,
+      "response_time_ms": 161,
+      "failed_checks": [],
+      "result": "PASS"
+    },
+    {
+      "id": "API-28",
+      "name": "Проверка доступности: документированный HTTP 201",
+      "method": "GET",
+      "path": "/ping",
+      "category": "positive",
+      "expected_status": 201,
+      "body": null,
+      "actual_status": 201,
+      "response_time_ms": 157,
+      "failed_checks": [],
+      "result": "PASS"
+    }
+  ]
+}

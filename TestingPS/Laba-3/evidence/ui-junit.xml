@@ -1,0 +1,46 @@
+<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="2.589906">
+<testsuite name="shop.spec.ts" timestamp="2026-11-26T08:40:15.406Z" hostname="" tests="6" failures="0" skipped="0" time="5.822" errors="0">
+<testcase name="UI-01 регистрация → вход → поиск → корзина → заказ → выход" classname="shop.spec.ts" time="1.757">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../test-results/shop-UI-01-регистрация-→-в-bebbc-к-→-корзина-→-заказ-→-выход/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="UI-02 неверный пароль не создаёт сессию" classname="shop.spec.ts" time="0.851">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../test-results/shop-UI-02-неверный-пароль-не-создаёт-сессию/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="UI-03 поиск без результатов и очистка фильтра" classname="shop.spec.ts" time="0.503">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../test-results/shop-UI-03-поиск-без-результатов-и-очистка-фильтра/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="UI-04 гость не добавляет товар в корзину" classname="shop.spec.ts" time="0.593">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../test-results/shop-UI-04-гость-не-добавляет-товар-в-корзину/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="UI-05 повторная регистрация показывает ошибку" classname="shop.spec.ts" time="0.843">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../test-results/shop-UI-05-повторная-регистрация-показывает-ошибку/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+<testcase name="UI-06 удаление последней позиции очищает корзину" classname="shop.spec.ts" time="1.275">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|../../test-results/shop-UI-06-удаление-последней-позиции-очищает-корзину/test-finished-1.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

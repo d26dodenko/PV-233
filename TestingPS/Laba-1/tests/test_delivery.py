@@ -1,4 +1,4 @@
-"""Тест-кейсы TC-01—TC-34 описаны в docs/report.md."""
+"""Тест-кейсы TC-01—TC-34 описаны в TestingPS/Laba-1/report.md."""
 
 import pytest
 
@@ -47,13 +47,21 @@ def test_delivery_cost(order_amount, distance_km, is_premium, expected):
     "order_amount,distance_km,is_premium,message",
     [
         pytest.param(-1, 10, False, "order_amount must be >= 0", id="TC-27-negative-order"),
-        pytest.param(-0.01, 10, True, "order_amount must be >= 0", id="TC-28-negative-order-premium"),
+        pytest.param(
+            -0.01, 10, True, "order_amount must be >= 0", id="TC-28-negative-order-premium"
+        ),
         pytest.param(1000, -1, False, "distance_km must be >= 0", id="TC-29-negative-distance"),
-        pytest.param(1000, -0.01, True, "distance_km must be >= 0", id="TC-30-negative-distance-premium"),
+        pytest.param(
+            1000, -0.01, True, "distance_km must be >= 0", id="TC-30-negative-distance-premium"
+        ),
         pytest.param(5000, -1, False, "distance_km must be >= 0", id="TC-31-free-invalid-distance"),
-        pytest.param(6000, -1, True, "distance_km must be >= 0", id="TC-32-free-invalid-distance-premium"),
+        pytest.param(
+            6000, -1, True, "distance_km must be >= 0", id="TC-32-free-invalid-distance-premium"
+        ),
         pytest.param(-1, -1, False, "order_amount must be >= 0", id="TC-33-both-negative"),
-        pytest.param(-0.01, 0, True, "order_amount must be >= 0", id="TC-34-negative-order-zero-distance"),
+        pytest.param(
+            -0.01, 0, True, "order_amount must be >= 0", id="TC-34-negative-order-zero-distance"
+        ),
     ],
 )
 def test_invalid_delivery_input(order_amount, distance_km, is_premium, message):

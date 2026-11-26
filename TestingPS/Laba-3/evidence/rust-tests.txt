@@ -1,0 +1,43 @@
+info: cargo-llvm-cov currently setting cfg(coverage); you can opt-out it by passing --no-cfg-coverage
+   Compiling moroz-shop v0.1.0 (/home/hoshibatista/PV-233/TestingPS/Laba-3)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.30s
+     Running unittests src/lib.rs (target/llvm-cov-target/debug/build/moroz-shop/5616e64ceabc27d7/out/moroz_shop-5616e64ceabc27d7)
+
+running 8 tests
+test tests::catalog_has_unique_ids_and_positive_prices ... ok
+test tests::email_invalid ... ok
+test tests::email_valid ... ok
+test tests::total_empty ... ok
+test tests::expired_session_rejected ... ok
+test tests::total_multiple ... ok
+test tests::total_overflow_multiply ... ok
+test tests::total_overflow_sum ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (target/llvm-cov-target/debug/build/moroz-shop/f44fc2470c95522d/out/moroz_shop-f44fc2470c95522d)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/shop_api.rs (target/llvm-cov-target/debug/build/moroz-shop/3ed10138bb606eb5/out/shop_api-3ed10138bb606eb5)
+
+running 12 tests
+test malformed_json_and_wrong_types ... ok
+test health_and_catalog ... ok
+test registration_rejects_invalid_input ... ok
+test protected_resources_require_token ... ok
+test oversized_body_and_unknown_api_are_rejected ... ok
+test remove_item_and_validate_address ... ok
+test quantity_size_and_missing_product ... ok
+test checkout_uses_server_prices_and_clears_cart ... ok
+test logout_revokes_token ... ok
+test duplicate_email_is_case_insensitive ... ok
+test wrong_and_unknown_credentials ... ok
+test cart_and_orders_are_isolated_by_session ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.35s
+
+
+    Finished report saved to artifacts/rust/lcov.info

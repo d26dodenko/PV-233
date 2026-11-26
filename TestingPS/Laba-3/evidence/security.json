@@ -1,0 +1,37 @@
+{
+  "generated_utc": "2026-11-26T08:32:04.887917+00:00",
+  "npm_root": {
+    "info": 0,
+    "low": 0,
+    "moderate": 6,
+    "high": 12,
+    "critical": 0,
+    "total": 18
+  },
+  "npm_frontend": {
+    "info": 0,
+    "low": 0,
+    "moderate": 2,
+    "high": 0,
+    "critical": 0,
+    "total": 2
+  },
+  "cargo_vulnerabilities": 0,
+  "python_vulnerabilities": 0,
+  "bandit_results_count": 0,
+  "bandit_metrics": {
+    "CONFIDENCE.HIGH": 0,
+    "CONFIDENCE.LOW": 0,
+    "CONFIDENCE.MEDIUM": 0,
+    "CONFIDENCE.UNDEFINED": 0,
+    "SEVERITY.HIGH": 0,
+    "SEVERITY.LOW": 0,
+    "SEVERITY.MEDIUM": 0,
+    "SEVERITY.UNDEFINED": 0,
+    "loc": 46,
+    "nosec": 0,
+    "skipped_tests": 0
+  },
+  "critical_remediation": "handlebars pinned to 4.7.10 via overrides",
+  "policy": "npm critical blocks; Bandit High blocks; cargo and pip-audit any vulnerability blocks"
+}

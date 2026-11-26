@@ -1,0 +1,33 @@
+{
+  "generated_utc": "2026-11-26T08:40:12.885877+00:00",
+  "modules": {
+    "delivery.py": {
+      "loc": 28,
+      "sloc": 16,
+      "comments": 0,
+      "complexity": {
+        "calculate_delivery_cost": 7
+      },
+      "line_coverage_percent": 100.0,
+      "branch_coverage_percent": 100.0,
+      "confirmed_local_defects": 0,
+      "defect_density_per_kloc": 0.0,
+      "reaction_time_ms": null
+    },
+    "calculator.py": {
+      "loc": 27,
+      "sloc": 22,
+      "comments": 0,
+      "complexity": {
+        "calculate": 11
+      },
+      "line_coverage_percent": 100.0,
+      "branch_coverage_percent": 100.0,
+      "confirmed_local_defects": 0,
+      "defect_density_per_kloc": 0.0,
+      "reaction_time_ms": null
+    }
+  },
+  "defect_note": "0 найденных дефектов не доказывает их отсутствие; риски см. отчёты.",
+  "loc_definition": "radon raw LOC: все строки; SLOC: строки кода без комментариев/docstring"
+}

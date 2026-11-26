@@ -1,0 +1,23 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.11, pytest-9.1.1, pluggy-1.6.0 -- /home/hoshibatista/PV-233/.venv/bin/python3
+rootdir: /tmp/moroz-gate-x2d9965q
+configfile: pytest.ini
+plugins: platformdirs-4.14.8, cov-7.1.0
+collecting ... collected 1 item
+
+test_failure.py::test_gate FAILED                                        [100%]
+
+=================================== FAILURES ===================================
+__________________________________ test_gate ___________________________________
+
+    def test_gate():
+>       assert 2 + 2 == 5
+E       assert (2 + 2) == 5
+
+test_failure.py:2: AssertionError
+=========================== short test summary info ============================
+FAILED test_failure.py::test_gate - assert (2 + 2) == 5
+============================== 1 failed in 0.03s ===============================
+{"demo": "unit", "tool_exit_code": 1}
+
+Observed command exit code: 1

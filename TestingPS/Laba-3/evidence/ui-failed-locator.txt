@@ -1,0 +1,92 @@
+
+> moroz-roman-labs@1.0.0 test:e2e
+> playwright test
+
+[WebServer]     Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.03s
+[WebServer]      Running `target/debug/moroz-shop`
+
+Running 6 tests using 6 workers
+
+(node:15199) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15195) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15194) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15214) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15194) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15195) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15199) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15214) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  5 e2e/shop.spec.ts:51:1 › UI-03 поиск без результатов и очистка фильтра (974ms)
+  ✓  3 e2e/shop.spec.ts:61:1 › UI-04 гость не добавляет товар в корзину (1.0s)
+  ✓  6 e2e/shop.spec.ts:38:1 › UI-02 неверный пароль не создаёт сессию (1.9s)
+  ✓  1 e2e/shop.spec.ts:74:1 › UI-05 повторная регистрация показывает ошибку (2.4s)
+  ✓  4 e2e/shop.spec.ts:100:1 › UI-06 удаление последней позиции очищает корзину (2.8s)
+  ✘  2 e2e/shop.spec.ts:4:1 › UI-01 регистрация → вход → поиск → корзина → заказ → выход (9.5s)
+
+
+  1) e2e/shop.spec.ts:4:1 › UI-01 регистрация → вход → поиск → корзина → заказ → выход ─────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('Test street 10, Moscow, 101000', { exact: true })
+    Expected: visible
+    Timeout: 7000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 7000ms
+      - waiting for getByText('Test street 10, Moscow, 101000', { exact: true })
+
+
+       at pages.ts:44
+
+      42 |     await this.page.getByRole('button', { name: 'Place Order' }).click();
+      43 |     await expect(this.page.getByRole('heading', { name: 'Order Placed Successfully!' })).toBeVisible();
+    > 44 |     await expect(this.page.getByText('Test street 10, Moscow, 101000', { exact: true })).toBeVisible();
+         |                                                                                          ^
+      45 |   }
+      46 | }
+      47 |
+        at CartPage.checkout (/home/hoshibatista/PV-233/e2e/pages.ts:44:90)
+        at /home/hoshibatista/PV-233/e2e/shop.spec.ts:19:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/shop-UI-01-регистрация-→-в-bebbc-к-→-корзина-→-заказ-→-выход/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/shop-UI-01-регистрация-→-в-bebbc-к-→-корзина-→-заказ-→-выход/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/shop-UI-01-регистрация-→-в-bebbc-к-→-корзина-→-заказ-→-выход/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/shop-UI-01-регистрация-→-в-bebbc-к-→-корзина-→-заказ-→-выход/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/shop-UI-01-регистрация-→-в-bebbc-к-→-корзина-→-заказ-→-выход/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    e2e/shop.spec.ts:4:1 › UI-01 регистрация → вход → поиск → корзина → заказ → выход ──────────────
+  5 passed (10.8s)
+
+To open last HTML report run:
+
+  npx playwright show-report artifacts/playwright/html

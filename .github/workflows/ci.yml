@@ -1,0 +1,219 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      gate_demo:
+        description: 'Учебная инъекция отказа (none — обычный прогон)'
+        type: choice
+        options: [none, unit, coverage, security]
+        default: none
+
+# Workflow проверяет код PR, поэтому запись в репозиторий ему не нужна.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  GATE_DEMO: ${{ inputs.gate_demo || 'none' }}
+
+jobs:
+  python:
+    name: Python unit and lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: '0.11.30'
+          python-version: '3.13'
+          enable-cache: true
+      - run: uv sync --locked --dev
+      - run: uv run --locked ruff check . && uv run --locked ruff format --check .
+      - name: Unit tests and coverage gate (100% ≥ 80%)
+        run: uv run --locked pytest -v --cov --cov-branch --cov-report=term-missing --cov-report=xml:artifacts/python/coverage.xml --cov-report=html:artifacts/python/html --junitxml=artifacts/python/junit.xml
+      - name: Optional failure demonstration
+        if: env.GATE_DEMO == 'unit' || env.GATE_DEMO == 'coverage'
+        run: uv run --locked python TestingPS/Laba-3/scripts/demo_gate.py "$GATE_DEMO"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: always()
+        with:
+          name: python-reports
+          path: artifacts/python
+          retention-days: 14
+
+  rust:
+    name: Rust unit and lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca
+        with:
+          toolchain: '1.100.0'
+          components: rustfmt,clippy
+      - run: cargo fmt --all --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: cargo test --locked --lib
+
+  security:
+    name: Security gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: astral-sh/setup-uv@94527f2e458b27549849d47d273a16bec83a01e9 # v7
+        with:
+          version: '0.11.30'
+          python-version: '3.13'
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca
+        with:
+          toolchain: '1.100.0'
+      - run: uv sync --locked --dev
+      - run: mkdir -p artifacts/security
+      - name: Python static analysis (High blocks)
+        run: uv run --locked bandit -lll TestingPS/Laba-1/delivery.py Specification/Laba-1/calculator.py -f json -o artifacts/security/bandit.json
+      - name: Python dependency audit (any known vulnerability blocks)
+        run: uv run --locked pip-audit --format json --output artifacts/security/pip-audit.json
+      - run: npm ci && npm --prefix TestingPS/Laba-3/frontend ci
+      - name: JavaScript dependency audit (Critical blocks)
+        run: |
+          npm audit --audit-level=critical > artifacts/security/npm.txt
+          npm --prefix TestingPS/Laba-3/frontend audit --audit-level=critical > artifacts/security/frontend-npm.txt
+      - run: cargo install cargo-audit --version 0.23.0 --locked
+      - run: cargo audit --json > artifacts/security/cargo-audit.json
+      - name: Optional security failure demonstration
+        if: env.GATE_DEMO == 'security'
+        run: uv run --locked python TestingPS/Laba-3/scripts/demo_gate.py security
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: always()
+        with:
+          name: security-reports
+          path: artifacts/security
+          retention-days: 14
+
+  build:
+    name: Build
+    needs: [python, rust, security]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca
+        with:
+          toolchain: '1.100.0'
+      - run: npm ci && npm --prefix TestingPS/Laba-3/frontend ci
+      - run: npm run typecheck && npm --prefix TestingPS/Laba-3/frontend run lint && npm --prefix TestingPS/Laba-3/frontend run build
+      - run: cargo build --release --locked
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: application
+          path: |
+            target/release/moroz-shop
+            TestingPS/Laba-3/frontend/dist
+          retention-days: 7
+
+  integration:
+    name: Integration and coverage
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca
+        with:
+          toolchain: '1.100.0'
+          components: llvm-tools-preview
+      - run: cargo install cargo-llvm-cov --version 0.9.2 --locked
+      - run: mkdir -p artifacts/rust
+      - name: Combined unit and integration coverage ≥ 80%
+        run: cargo llvm-cov --locked --all-targets --fail-under-lines 80 --lcov --output-path artifacts/rust/lcov.info
+      - name: HTML and Cobertura reports
+        if: always()
+        run: |
+          cargo llvm-cov report --html --output-dir artifacts/rust/html
+          cargo llvm-cov report --cobertura --output-path artifacts/rust/cobertura.xml
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: always()
+        with:
+          name: rust-reports
+          path: artifacts/rust
+          retention-days: 14
+
+  e2e:
+    name: Playwright E2E
+    needs: integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: application
+          path: .
+      - run: npm ci && npx playwright install --with-deps chromium
+      - run: chmod +x target/release/moroz-shop
+      # Используем тот же release binary, который создала стадия build.
+      - run: npm run test:e2e
+        env:
+          SHOP_EXECUTABLE: ./target/release/moroz-shop
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: always()
+        with:
+          name: playwright-reports
+          path: |
+            artifacts/playwright
+            test-results
+          retention-days: 14
+
+  package:
+    name: Package release
+    needs: e2e
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: application
+          path: application
+      - run: chmod +x application/target/release/moroz-shop && tar -czf moroz-shop-linux-x64.tar.gz -C application target/release/moroz-shop TestingPS/Laba-3/frontend/dist
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: release-candidate
+          path: moroz-shop-linux-x64.tar.gz
+          retention-days: 14
+
+  required:
+    name: Required quality gate
+    if: always()
+    needs: [python, rust, security, build, integration, e2e, package]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    env:
+      RESULTS: ${{ toJSON(needs) }}
+    steps:
+      # Skipped job сам по себе не защищает merge. Проверяем все результаты явно.
+      - run: |
+          python3 - <<'PY'
+          import json, os
+          results = json.loads(os.environ['RESULTS'])
+          bad = {name: job['result'] for name, job in results.items() if job['result'] != 'success'}
+          print(bad or 'All quality gates passed')
+          raise SystemExit(bool(bad))
+          PY

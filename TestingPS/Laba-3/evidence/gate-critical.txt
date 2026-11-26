@@ -1,0 +1,3 @@
+npm audit: critical=1, high=12
+
+Observed command exit code: 1

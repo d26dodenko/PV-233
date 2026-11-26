@@ -1,0 +1,90 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.11, pytest-9.1.1, pluggy-1.6.0 -- /home/hoshibatista/PV-233/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/hoshibatista/PV-233
+configfile: pyproject.toml
+testpaths: TestingPS/Laba-1/tests, Specification/Laba-1/tests
+plugins: platformdirs-4.14.8, cov-7.1.0
+collecting ... collected 67 items
+
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-01-zero] PASSED [  1%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-02-zero-premium] PASSED [  2%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-03-short] PASSED [  4%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-04-short-premium] PASSED [  5%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-05-before-5] PASSED [  7%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-06-before-5-premium] PASSED [  8%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-07-at-5] PASSED [ 10%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-08-at-5-premium] PASSED [ 11%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-09-after-5] PASSED [ 13%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-10-after-5-premium] PASSED [ 14%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-11-middle] PASSED [ 16%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-12-middle-premium] PASSED [ 17%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-13-before-20] PASSED [ 19%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-14-before-20-premium] PASSED [ 20%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-15-at-20] PASSED [ 22%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-16-at-20-premium] PASSED [ 23%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-17-after-20] PASSED [ 25%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-18-after-20-premium] PASSED [ 26%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-19-long] PASSED [ 28%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-20-long-premium] PASSED [ 29%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-21-before-5000] PASSED [ 31%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-22-before-5000-premium] PASSED [ 32%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-23-at-5000] PASSED [ 34%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-24-at-5000-premium] PASSED [ 35%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-25-after-5000-long] PASSED [ 37%]
+TestingPS/Laba-1/tests/test_delivery.py::test_delivery_cost[TC-26-after-5000-long-premium] PASSED [ 38%]
+TestingPS/Laba-1/tests/test_delivery.py::test_invalid_delivery_input[TC-27-negative-order] PASSED [ 40%]
+TestingPS/Laba-1/tests/test_delivery.py::test_invalid_delivery_input[TC-28-negative-order-premium] PASSED [ 41%]
+TestingPS/Laba-1/tests/test_delivery.py::test_invalid_delivery_input[TC-29-negative-distance] PASSED [ 43%]
+TestingPS/Laba-1/tests/test_delivery.py::test_invalid_delivery_input[TC-30-negative-distance-premium] PASSED [ 44%]
+TestingPS/Laba-1/tests/test_delivery.py::test_invalid_delivery_input[TC-31-free-invalid-distance] PASSED [ 46%]
+TestingPS/Laba-1/tests/test_delivery.py::test_invalid_delivery_input[TC-32-free-invalid-distance-premium] PASSED [ 47%]
+TestingPS/Laba-1/tests/test_delivery.py::test_invalid_delivery_input[TC-33-both-negative] PASSED [ 49%]
+TestingPS/Laba-1/tests/test_delivery.py::test_invalid_delivery_input[TC-34-negative-order-zero-distance] PASSED [ 50%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[2-+-3-5] PASSED [ 52%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[-2---3--5] PASSED [ 53%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[-2-*--3-6] PASSED [ 55%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[5-/-2-2.5] PASSED [ 56%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[0-*-8-0] PASSED [ 58%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[0.1-+-0.2-0.3] PASSED [ 59%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[1e+100-/-1e+100-1] PASSED [ 61%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[0-/--2-0] PASSED [ 62%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-True] PASSED [ 64%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-False] PASSED [ 65%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-1] PASSED [ 67%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-None] PASSED [ 68%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-value4] PASSED [ 70%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-value5] PASSED [ 71%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-True] PASSED [ 73%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-False] PASSED [ 74%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-1] PASSED [ 76%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-None] PASSED [ 77%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-value4] PASSED [ 79%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-value5] PASSED [ 80%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[left-nan] PASSED [ 82%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[left-inf] PASSED [ 83%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[left--inf] PASSED [ 85%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[right-nan] PASSED [ 86%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[right-inf] PASSED [ 88%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[right--inf] PASSED [ 89%]
+Specification/Laba-1/tests/test_calculator.py::test_division_by_zero[0] PASSED [ 91%]
+Specification/Laba-1/tests/test_calculator.py::test_division_by_zero[0.0] PASSED [ 92%]
+Specification/Laba-1/tests/test_calculator.py::test_division_by_zero[-0.0] PASSED [ 94%]
+Specification/Laba-1/tests/test_calculator.py::test_unsupported_operation[**] PASSED [ 95%]
+Specification/Laba-1/tests/test_calculator.py::test_unsupported_operation[] PASSED [ 97%]
+Specification/Laba-1/tests/test_calculator.py::test_unsupported_operation[None] PASSED [ 98%]
+Specification/Laba-1/tests/test_calculator.py::test_overflow PASSED      [100%]
+
+--- generated xml file: /home/hoshibatista/PV-233/artifacts/python/junit.xml ---
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.11-final-0 _______________
+
+Name                                 Stmts   Miss Branch BrPart  Cover   Missing
+--------------------------------------------------------------------------------
+Specification/Laba-1/calculator.py      21      0     18      0   100%
+TestingPS/Laba-1/delivery.py            15      0     12      0   100%
+--------------------------------------------------------------------------------
+TOTAL                                   36      0     30      0   100%
+Coverage XML written to file artifacts/python/coverage.xml
+Required test coverage of 100.0% reached. Total coverage: 100.00%
+============================== 67 passed in 0.12s ==============================

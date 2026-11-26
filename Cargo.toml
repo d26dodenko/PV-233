@@ -1,0 +1,3 @@
+[workspace]
+members = ["TestingPS/Laba-3"]
+resolver = "3"

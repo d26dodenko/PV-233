@@ -1,0 +1,43 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.11, pytest-9.1.1, pluggy-1.6.0 -- /home/hoshibatista/PV-233/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/hoshibatista/PV-233
+configfile: pyproject.toml
+plugins: platformdirs-4.14.8, cov-7.1.0
+collecting ... collected 33 items
+
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[2-+-3-5] PASSED [  3%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[-2---3--5] PASSED [  6%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[-2-*--3-6] PASSED [  9%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[5-/-2-2.5] PASSED [ 12%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[0-*-8-0] PASSED [ 15%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[0.1-+-0.2-0.3] PASSED [ 18%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[1e+100-/-1e+100-1] PASSED [ 21%]
+Specification/Laba-1/tests/test_calculator.py::test_arithmetic[0-/--2-0] PASSED [ 24%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-True] PASSED [ 27%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-False] PASSED [ 30%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-1] PASSED [ 33%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-None] PASSED [ 36%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-value4] PASSED [ 39%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[left-value5] PASSED [ 42%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-True] PASSED [ 45%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-False] PASSED [ 48%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-1] PASSED [ 51%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-None] PASSED [ 54%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-value4] PASSED [ 57%]
+Specification/Laba-1/tests/test_calculator.py::test_invalid_types[right-value5] PASSED [ 60%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[left-nan] PASSED [ 63%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[left-inf] PASSED [ 66%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[left--inf] PASSED [ 69%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[right-nan] PASSED [ 72%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[right-inf] PASSED [ 75%]
+Specification/Laba-1/tests/test_calculator.py::test_non_finite[right--inf] PASSED [ 78%]
+Specification/Laba-1/tests/test_calculator.py::test_division_by_zero[0] PASSED [ 81%]
+Specification/Laba-1/tests/test_calculator.py::test_division_by_zero[0.0] PASSED [ 84%]
+Specification/Laba-1/tests/test_calculator.py::test_division_by_zero[-0.0] PASSED [ 87%]
+Specification/Laba-1/tests/test_calculator.py::test_unsupported_operation[**] PASSED [ 90%]
+Specification/Laba-1/tests/test_calculator.py::test_unsupported_operation[] PASSED [ 93%]
+Specification/Laba-1/tests/test_calculator.py::test_unsupported_operation[None] PASSED [ 96%]
+Specification/Laba-1/tests/test_calculator.py::test_overflow PASSED      [100%]
+
+============================== 33 passed in 0.02s ==============================

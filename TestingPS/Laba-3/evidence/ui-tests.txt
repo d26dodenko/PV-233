@@ -1,0 +1,43 @@
+
+> moroz-roman-labs@1.0.0 test:e2e
+> playwright test --config TestingPS/Laba-3/playwright.config.ts
+
+
+Running 6 tests using 6 workers
+
+(node:26815) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26801) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26803) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26809) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26821) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26815) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26803) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26821) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26801) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26809) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  6 TestingPS/Laba-3/e2e/shop.spec.ts:55:1 › UI-03 поиск без результатов и очистка фильтра (503ms)
+  ✓  3 TestingPS/Laba-3/e2e/shop.spec.ts:66:1 › UI-04 гость не добавляет товар в корзину (593ms)
+  ✓  1 TestingPS/Laba-3/e2e/shop.spec.ts:79:1 › UI-05 повторная регистрация показывает ошибку (843ms)
+  ✓  2 TestingPS/Laba-3/e2e/shop.spec.ts:42:1 › UI-02 неверный пароль не создаёт сессию (851ms)
+  ✓  5 TestingPS/Laba-3/e2e/shop.spec.ts:105:1 › UI-06 удаление последней позиции очищает корзину (1.3s)
+  ✓  4 TestingPS/Laba-3/e2e/shop.spec.ts:4:1 › UI-01 регистрация → вход → поиск → корзина → заказ → выход (1.8s)
+
+  6 passed (2.6s)
+
+To open last HTML report run:
+
+  npx playwright show-report artifacts/playwright/html

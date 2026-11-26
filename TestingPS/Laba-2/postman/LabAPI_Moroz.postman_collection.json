@@ -1,0 +1,1506 @@
+{
+  "info": {
+    "name": "LabAPI_Moroz",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Мороз Роман. Строгие ожидания для негативных входов: обнаруженные дефекты дают красные проверки. HTTP 200 auth/POST и 201 DELETE/ping сохранены по контракту Restful-Booker. Порядок: Auth → Booking → Health. Только свои bookingId/probeId."
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "API-01 Получить токен",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth",
+            "description": "API-01. Получить токен. Тип: positive. Вход: POST /auth; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"admin\", \"password\": \"password123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"token\"); pm.environment.unset(\"bookingId\"); pm.environment.unset(\"probeId\");",
+                  "pm.environment.set(\"runName\", \"Moroz_\" + Date.now() + \"_\" + Math.random().toString(16).slice(2,8));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-01: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"Токен непустой\", () => pm.expect(pm.response.json().token).to.be.a(\"string\").and.not.empty);",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.token) pm.environment.set(\"token\", data.token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-02 Неверный пароль: документированная особенность HTTP 200",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth",
+            "description": "API-02. Неверный пароль: документированная особенность HTTP 200. Тип: negative. Вход: POST /auth; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"admin\", \"password\": \"wrong\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-02: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"Ошибка авторизации без токена\", () => { const data = pm.response.json(); pm.expect(data.reason).to.eql(\"Bad credentials\"); pm.expect(data).not.to.have.property(\"token\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-03 Неверный логин",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth",
+            "description": "API-03. Неверный логин. Тип: negative. Вход: POST /auth; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"wrong\", \"password\": \"password123\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-03: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"Нет токена\", () => pm.expect(pm.response.json()).not.to.have.property(\"token\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "item": [
+        {
+          "name": "API-04 Создать бронирование",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-04. Создать бронирование. Тип: positive. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\", \"lastname\": \"Moroz\", \"totalprice\": 120, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-10\", \"checkout\": \"2027-01-12\"}, \"additionalneeds\": \"Breakfast\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-04: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"Схема ответа\", () => { const d = pm.response.json(); pm.expect(d.bookingid).to.be.a(\"number\"); pm.expect(d.booking.totalprice).to.eql(120); pm.expect(d.booking.firstname).to.eql(pm.environment.get(\"runName\")); });",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"bookingId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-05 Список и фильтр по имени",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking?firstname={{runName}}",
+            "description": "API-05. Список и фильтр по имени. Тип: positive. Вход: GET /booking?firstname={{runName}}; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-05: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"Список содержит наше бронирование\", () => pm.expect(pm.response.json().map(b => b.bookingid)).to.include(Number(pm.environment.get(\"bookingId\"))));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-06 Получить созданную запись",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-06. Получить созданную запись. Тип: positive. Вход: GET /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-06: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"Все поля сохранены\", () => { const d = pm.response.json(); pm.expect(d.firstname).to.eql(pm.environment.get(\"runName\")); pm.expect(d.totalprice).to.eql(120); pm.expect(d.depositpaid).to.eql(true); pm.expect(d.bookingdates).to.deep.eql({checkin:\"2027-01-10\",checkout:\"2027-01-12\"}); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-07 Полное обновление PUT",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-07. Полное обновление PUT. Тип: positive. Вход: PUT /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\", \"lastname\": \"Moroz\", \"totalprice\": 250, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-10\", \"checkout\": \"2027-01-12\"}, \"additionalneeds\": \"Dinner\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-07: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"Обновлены цена и услуга\", () => { pm.expect(pm.response.json().totalprice).to.eql(250); pm.expect(pm.response.json().additionalneeds).to.eql(\"Dinner\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-08 Частичное обновление PATCH",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-08. Частичное обновление PATCH. Тип: positive. Вход: PATCH /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"lastname\": \"Updated\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-08: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"Изменено только указанное поле\", () => { pm.expect(pm.response.json().lastname).to.eql(\"Updated\"); pm.expect(pm.response.json().totalprice).to.eql(250); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-09 Обновление сохранено при GET",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-09. Обновление сохранено при GET. Тип: positive. Вход: GET /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-09: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"PUT и PATCH персистентны\", () => { pm.expect(pm.response.json().lastname).to.eql(\"Updated\"); pm.expect(pm.response.json().totalprice).to.eql(250); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-10 PUT без токена",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-10. PUT без токена. Тип: negative. Вход: PUT /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 403; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\", \"lastname\": \"Moroz\", \"totalprice\": 250, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-10\", \"checkout\": \"2027-01-12\"}, \"additionalneeds\": \"Dinner\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-10: HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-11 PATCH с неверным токеном",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token=invalid"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-11. PATCH с неверным токеном. Тип: negative. Вход: PATCH /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 403; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"lastname\": \"Intruder\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-11: HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-12 DELETE без токена",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-12. DELETE без токена. Тип: negative. Вход: DELETE /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 403; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-12: HTTP 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-13 Негативные проверки не изменили запись",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-13. Негативные проверки не изменили запись. Тип: positive. Вход: GET /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-13: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "pm.test(\"Запись не изменена\", () => pm.expect(pm.response.json().lastname).to.eql(\"Updated\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-14 Несуществующий ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/2147483647",
+            "description": "API-14. Несуществующий ID. Тип: negative. Вход: GET /booking/2147483647; тело приведено в Body. Ожидается HTTP 404; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-14: HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-15 Синтаксически неверный JSON",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-15. Синтаксически неверный JSON. Тип: negative. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 400; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\":",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-15: HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-16 Строка вместо totalprice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-16. Строка вместо totalprice. Тип: negative. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 400; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\", \"lastname\": \"Moroz\", \"totalprice\": \"not-a-number\", \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-10\", \"checkout\": \"2027-01-12\"}, \"additionalneeds\": \"Breakfast\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"probeId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-16: HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"probeId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-16-C Удалить только запись текущего probe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{probeId}}",
+            "description": "API-16-C. Удалить только запись текущего probe. Тип: cleanup. Вход: DELETE /booking/{{probeId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"probeId\")) pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-16-C: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-17 Отсутствуют обязательные поля",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-17. Отсутствуют обязательные поля. Тип: negative. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 400; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"probeId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-17: HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"probeId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-17-C Удалить только запись текущего probe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{probeId}}",
+            "description": "API-17-C. Удалить только запись текущего probe. Тип: cleanup. Вход: DELETE /booking/{{probeId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"probeId\")) pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-17-C: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-18 Пустые имена",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-18. Пустые имена. Тип: boundary. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 400; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"\", \"lastname\": \"\", \"totalprice\": 120, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-10\", \"checkout\": \"2027-01-12\"}, \"additionalneeds\": \"Breakfast\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"probeId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-18: HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"probeId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-18-C Удалить только запись текущего probe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{probeId}}",
+            "description": "API-18-C. Удалить только запись текущего probe. Тип: cleanup. Вход: DELETE /booking/{{probeId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"probeId\")) pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-18-C: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-19 Имя длиной 1001 символ",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-19. Имя длиной 1001 символ. Тип: boundary. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM\", \"lastname\": \"Moroz\", \"totalprice\": 120, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-10\", \"checkout\": \"2027-01-12\"}, \"additionalneeds\": \"Breakfast\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"probeId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-19: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"probeId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-19-C Удалить только запись текущего probe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{probeId}}",
+            "description": "API-19-C. Удалить только запись текущего probe. Тип: cleanup. Вход: DELETE /booking/{{probeId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"probeId\")) pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-19-C: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-20 Нулевая цена",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-20. Нулевая цена. Тип: boundary. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\", \"lastname\": \"Moroz\", \"totalprice\": 0, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-10\", \"checkout\": \"2027-01-12\"}, \"additionalneeds\": \"Breakfast\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"probeId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-20: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"probeId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-20-C Удалить только запись текущего probe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{probeId}}",
+            "description": "API-20-C. Удалить только запись текущего probe. Тип: cleanup. Вход: DELETE /booking/{{probeId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"probeId\")) pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-20-C: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-21 Отрицательная цена",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-21. Отрицательная цена. Тип: boundary. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 400; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\", \"lastname\": \"Moroz\", \"totalprice\": -1, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-10\", \"checkout\": \"2027-01-12\"}, \"additionalneeds\": \"Breakfast\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"probeId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-21: HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"probeId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-21-C Удалить только запись текущего probe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{probeId}}",
+            "description": "API-21-C. Удалить только запись текущего probe. Тип: cleanup. Вход: DELETE /booking/{{probeId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"probeId\")) pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-21-C: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-22 Большая цена 2147483647",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-22. Большая цена 2147483647. Тип: boundary. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 200; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\", \"lastname\": \"Moroz\", \"totalprice\": 2147483647, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-10\", \"checkout\": \"2027-01-12\"}, \"additionalneeds\": \"Breakfast\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"probeId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-22: HTTP 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"probeId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-22-C Удалить только запись текущего probe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{probeId}}",
+            "description": "API-22-C. Удалить только запись текущего probe. Тип: cleanup. Вход: DELETE /booking/{{probeId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"probeId\")) pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-22-C: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-23 Выезд раньше заезда",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-23. Выезд раньше заезда. Тип: boundary. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 400; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\", \"lastname\": \"Moroz\", \"totalprice\": 120, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"2027-01-12\", \"checkout\": \"2027-01-10\"}, \"additionalneeds\": \"Breakfast\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"probeId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-23: HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"probeId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-23-C Удалить только запись текущего probe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{probeId}}",
+            "description": "API-23-C. Удалить только запись текущего probe. Тип: cleanup. Вход: DELETE /booking/{{probeId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"probeId\")) pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-23-C: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-24 Невалидные даты",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking",
+            "description": "API-24. Невалидные даты. Тип: boundary. Вход: POST /booking; тело приведено в Body. Ожидается HTTP 400; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firstname\": \"{{runName}}\", \"lastname\": \"Moroz\", \"totalprice\": 120, \"depositpaid\": true, \"bookingdates\": {\"checkin\": \"not-a-date\", \"checkout\": \"not-a-date\"}, \"additionalneeds\": \"Breakfast\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.unset(\"probeId\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-24: HTTP 400\", () => pm.response.to.have.status(400));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));",
+                  "if (pm.response.code === 200) { const data = pm.response.json(); if (data.bookingid) pm.environment.set(\"probeId\", data.bookingid); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-24-C Удалить только запись текущего probe",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{probeId}}",
+            "description": "API-24-C. Удалить только запись текущего probe. Тип: cleanup. Вход: DELETE /booking/{{probeId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (!pm.environment.get(\"probeId\")) pm.execution.skipRequest();"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-24-C: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-25 Удаление: документированный HTTP 201",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-25. Удаление: документированный HTTP 201. Тип: positive. Вход: DELETE /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-25: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-26 GET удалённой записи",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-26. GET удалённой записи. Тип: negative. Вход: GET /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 404; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-26: HTTP 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "API-27 Повторное удаление: особенность HTTP 405",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}"
+              }
+            ],
+            "url": "{{baseUrl}}/booking/{{bookingId}}",
+            "description": "API-27. Повторное удаление: особенность HTTP 405. Тип: negative. Вход: DELETE /booking/{{bookingId}}; тело приведено в Body. Ожидается HTTP 405; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-27: HTTP 405\", () => pm.response.to.have.status(405));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "API-28 Проверка доступности: документированный HTTP 201",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/ping",
+            "description": "API-28. Проверка доступности: документированный HTTP 201. Тип: positive. Вход: GET /ping; тело приведено в Body. Ожидается HTTP 201; задержка < 2000 мс. Выполнять коллекцию целиком по порядку. Изменяются только созданные этим прогоном записи."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API-28: HTTP 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Ответ быстрее 2000 мс\", () => pm.expect(pm.response.responseTime).to.be.below(2000));",
+                  "pm.test(\"Ответ не пустой\", () => pm.expect(pm.response.text().length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
